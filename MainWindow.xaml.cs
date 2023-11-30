@@ -24,5 +24,11 @@ namespace Media_Sphere
         {
             InitializeComponent();
         }
+
+        private void inputBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DocViewer dc = new DocViewer();
+            dc.Verify(inputTxb.Text);
+        }
     }
 }
