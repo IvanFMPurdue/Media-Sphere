@@ -11,14 +11,10 @@ namespace Media_Sphere
 {
     internal class DocViewer
     {
-        public void Verify(string input)
+        //Creates a MessageBox by reading the given .txt file path
+        public void Display(string input)
         {
-            if (input.IndexOfAny(Path.GetInvalidPathChars()) != -1)
-                MessageBox.Show("Input contains invalid characters.");
-            else if (File.Exists(input) || Directory.Exists(input))
-                MessageBox.Show("Input is a valid file/directory path.");
-            else
-                MessageBox.Show("Input is NOT a file/directory path.");
+            MessageBox.Show(File.ReadAllText(input));
         }
     }
 }
