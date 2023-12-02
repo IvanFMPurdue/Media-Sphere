@@ -24,6 +24,7 @@ namespace Media_Sphere
             me.LoadedBehavior = MediaState.Manual;
             me.UnloadedBehavior = MediaState.Manual;
             me.Play();
+            //whatever
         }
     }
 }
