@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Media Sphere", "Media Sphere.csproj", "{D4A12775-8E8F-4E65-861B-510F08989EEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4A12775-8E8F-4E65-861B-510F08989EEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A12775-8E8F-4E65-861B-510F08989EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A12775-8E8F-4E65-861B-510F08989EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A12775-8E8F-4E65-861B-510F08989EEF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14C59EF9-8BED-4F68-93AA-BEAEE3C2889A}
+	EndGlobalSection
+EndGlobal
