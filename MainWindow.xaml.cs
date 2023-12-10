@@ -63,9 +63,10 @@ namespace Media_Sphere
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
-            isMenuOpen = !isMenuOpen;
-            DropdownMenu.IsOpen = isMenuOpen;
+            isMenuOpen = !isMenuOpen; // Toggle the menu state
+            DropdownMenu.IsOpen = isMenuOpen; // Set menu visibility based on the state
 
+            // If the menu is closed, call CollapseMenu
             if (!isMenuOpen)
             {
                 CollapseMenu();
@@ -82,6 +83,7 @@ namespace Media_Sphere
         {
             CollapseMenu();
         }
+
 
         private void HamburgerButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -102,7 +104,7 @@ namespace Media_Sphere
         private void FileOpenButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "All files (*.*)|*.*";
+            openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|PNG files (*.png)|*.png|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
             //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             openFileDialog.InitialDirectory = "test_data";
 
@@ -255,10 +257,12 @@ namespace Media_Sphere
         {
             try
             {
+                // Read and display the PNG image using an Image control
                 BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath));
                 Image image = new Image();
                 image.Source = bitmapImage;
 
+                // Replace the content in the Media Display Area with the Image control
                 MediaDisplayBorder.Child = image;
             }
             catch (Exception ex)
@@ -269,10 +273,13 @@ namespace Media_Sphere
 
         private void DisplayTextContent(string content)
         {
+            // Change the background color to white for better text visibility
             MediaDisplayBorder.Background = Brushes.White;
 
+            // Display the text content in a FlowDocumentReader to retain formatting
             FlowDocumentReader flowDocumentReader = new FlowDocumentReader();
 
+            // Create a FlowDocument and add Paragraphs for each line of the content
             FlowDocument flowDocument = new FlowDocument();
 
             string[] lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
@@ -281,16 +288,19 @@ namespace Media_Sphere
             {
                 Paragraph paragraph = new Paragraph(new Run(line));
 
-                paragraph.FontFamily = new FontFamily("Calibri");
-                paragraph.FontSize = 12;
+                // Set text properties for better readability
+                paragraph.FontFamily = new FontFamily("Calibri"); // Use a suitable font
+                paragraph.FontSize = 12; // Set the font size
 
                 flowDocument.Blocks.Add(paragraph);
             }
 
             flowDocumentReader.Document = flowDocument;
 
+            // Set the default view mode to scroll
             flowDocumentReader.ViewingMode = FlowDocumentReaderViewingMode.Scroll;
 
+            // Replace the content in the Media Display Area with the FlowDocumentReader
             MediaDisplayBorder.Child = flowDocumentReader;
         }
     }
