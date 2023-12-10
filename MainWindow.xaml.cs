@@ -97,7 +97,7 @@ namespace Media_Sphere
         private void FileOpenButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+            openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|PNG files (*.png)|*.png|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             bool? result = openFileDialog.ShowDialog();
@@ -121,6 +121,21 @@ namespace Media_Sphere
                 {
                     fileContent = PdfDocumentReader.ReadTextFromPdfDocument(filePath);
                 }
+                else if (extension.Equals(".png", StringComparison.OrdinalIgnoreCase))
+                {
+                    DisplayImage(filePath);
+                    return;
+                }
+                else if (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) || extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                {
+                    JPEG.DisplayJPEGImage(filePath, MediaDisplayBorder);
+                    return;
+                }
+                else if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    GIF.DisplayGIFImage(filePath, MediaDisplayBorder);
+                    return;
+                }
                 else
                 {
                     MessageBox.Show("Unsupported file format");
@@ -131,6 +146,23 @@ namespace Media_Sphere
             }
         }
 
+        private void DisplayImage(string imagePath)
+        {
+            try
+            {
+                // Read and display the PNG image using an Image control
+                BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath));
+                Image image = new Image();
+                image.Source = bitmapImage;
+
+                // Replace the content in the Media Display Area with the Image control
+                MediaDisplayBorder.Child = image;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error displaying PNG image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void DisplayTextContent(string content)
         {
             // Change the background color to white for better text visibility
