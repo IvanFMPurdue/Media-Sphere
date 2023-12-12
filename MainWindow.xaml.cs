@@ -31,6 +31,8 @@ namespace Media_Sphere
             //Loads AudioPlayer and VideoPlayer with the media element inputMdEl
             ap = new AudioPlayer(inputMdEl);
             vp = new VideoPlayer(inputMdEl);
+
+            UpdateRecentFiles();
         }
 
         private void inputBtn_Click(object sender, RoutedEventArgs e)
@@ -51,6 +53,10 @@ namespace Media_Sphere
                 MessageBox.Show("Input is NOT a valid file path.");
             else
             {
+                var localDB = new SQLiteExample("../../../localdb.sqlite");
+                localDB.AddFilePath(input);
+                UpdateRecentFiles();
+
                 //Gets extension of given file path
                 string extension = System.IO.Path.GetExtension(input).ToLower();
                 
@@ -68,6 +74,15 @@ namespace Media_Sphere
                         break;
                 }
             }
+        }
+
+        public void UpdateRecentFiles()
+        {
+            var localDB = new SQLiteExample("../../../localdb.sqlite");
+            List<string> storedFilePaths = localDB.GetFilePaths();
+
+            string displayText = string.Join(Environment.NewLine, storedFilePaths);
+            recentFilesTbl.Text = displayText;
         }
     }
 }

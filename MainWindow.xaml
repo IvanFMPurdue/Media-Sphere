@@ -10,6 +10,7 @@
         <TextBox x:Name="inputTxb" HorizontalAlignment="Left" Margin="21,179,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="372"/>
         <Button x:Name="inputBtn" Content="Input" HorizontalAlignment="Left" Margin="410,178,0,0" VerticalAlignment="Top" Click="inputBtn_Click"/>
         <MediaElement x:Name="inputMdEl" HorizontalAlignment="Left" Height="232" Margin="488,203,0,0" VerticalAlignment="Top" Width="312"/>
+        <TextBlock x:Name="recentFilesTbl" Background="White" HorizontalAlignment="Left" Margin="488,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="165" Width="302"/>
 
     </Grid>
 </Window>
