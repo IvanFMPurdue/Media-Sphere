@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Media_Sphere;
+using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +19,12 @@ namespace Media_Sphere
 {
     public partial class MainWindow : Window
     {
+        private FLACPlayer flacPlayer;
+
         public MainWindow()
         {
             InitializeComponent();
+            flacPlayer = new FLACPlayer();
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -56,10 +61,9 @@ namespace Media_Sphere
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
-            isMenuOpen = !isMenuOpen; // Toggle the menu state
-            DropdownMenu.IsOpen = isMenuOpen; // Set menu visibility based on the state
+            isMenuOpen = !isMenuOpen;
+            DropdownMenu.IsOpen = isMenuOpen;
 
-            // If the menu is closed, call CollapseMenu
             if (!isMenuOpen)
             {
                 CollapseMenu();
@@ -76,7 +80,6 @@ namespace Media_Sphere
         {
             CollapseMenu();
         }
-
 
         private void HamburgerButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -97,7 +100,7 @@ namespace Media_Sphere
         private void FileOpenButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|PNG files (*.png)|*.png|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+            openFileDialog.Filter = "All files (*.*)|*.*";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             bool? result = openFileDialog.ShowDialog();
@@ -136,6 +139,30 @@ namespace Media_Sphere
                     GIF.DisplayGIFImage(filePath, MediaDisplayBorder);
                     return;
                 }
+                else if (extension.Equals(".flac", StringComparison.OrdinalIgnoreCase))
+                {
+                    flacPlayer = new FLACPlayer();
+                    flacPlayer.PlayFLAC(filePath);
+
+                    DisplayAudioControlPanel("Pause/Play", flacPlayer.PauseOrResume, flacPlayer.Replay);
+                    return;
+                }
+                else if (extension.Equals(".wav", StringComparison.OrdinalIgnoreCase))
+                {
+                    WAVPlayer wavPlayer = new WAVPlayer();
+                    wavPlayer.PlayWAV(filePath);
+
+                    DisplayAudioControlPanel("Pause/Play", wavPlayer.PauseOrResume, wavPlayer.Replay);
+                    return;
+                }
+                else if (extension.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
+                {
+                    MP3Player mp3Player = new MP3Player();
+                    mp3Player.PlayMP3(filePath);
+
+                    DisplayAudioControlPanel("Pause/Play", mp3Player.PauseOrResume, mp3Player.Replay);
+                    return;
+                }
                 else
                 {
                     MessageBox.Show("Unsupported file format");
@@ -146,16 +173,36 @@ namespace Media_Sphere
             }
         }
 
+        // DisplayAudioControlPanel method
+        private void DisplayAudioControlPanel(string buttonText, Action playAction, Action replayAction)
+        {
+            MediaDisplayBorder.Background = Brushes.Black;
+
+            StackPanel buttonPanel = new StackPanel();
+            buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            buttonPanel.VerticalAlignment = VerticalAlignment.Center;
+
+            Button pausePlayButton = new Button();
+            pausePlayButton.Content = buttonText;
+            pausePlayButton.Click += (s, args) => playAction();
+            buttonPanel.Children.Add(pausePlayButton);
+
+            Button replayButton = new Button();
+            replayButton.Content = "Replay";
+            replayButton.Click += (s, args) => replayAction();
+            buttonPanel.Children.Add(replayButton);
+
+            MediaDisplayBorder.Child = buttonPanel;
+        }
+
         private void DisplayImage(string imagePath)
         {
             try
             {
-                // Read and display the PNG image using an Image control
                 BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath));
                 Image image = new Image();
                 image.Source = bitmapImage;
 
-                // Replace the content in the Media Display Area with the Image control
                 MediaDisplayBorder.Child = image;
             }
             catch (Exception ex)
@@ -163,15 +210,13 @@ namespace Media_Sphere
                 MessageBox.Show($"Error displaying PNG image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void DisplayTextContent(string content)
         {
-            // Change the background color to white for better text visibility
             MediaDisplayBorder.Background = Brushes.White;
 
-            // Display the text content in a FlowDocumentReader to retain formatting
             FlowDocumentReader flowDocumentReader = new FlowDocumentReader();
 
-            // Create a FlowDocument and add Paragraphs for each line of the content
             FlowDocument flowDocument = new FlowDocument();
 
             string[] lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
@@ -180,19 +225,16 @@ namespace Media_Sphere
             {
                 Paragraph paragraph = new Paragraph(new Run(line));
 
-                // Set text properties for better readability
-                paragraph.FontFamily = new FontFamily("Calibri"); // Use a suitable font
-                paragraph.FontSize = 12; // Set the font size
+                paragraph.FontFamily = new FontFamily("Calibri");
+                paragraph.FontSize = 12;
 
                 flowDocument.Blocks.Add(paragraph);
             }
 
             flowDocumentReader.Document = flowDocument;
 
-            // Set the default view mode to scroll
             flowDocumentReader.ViewingMode = FlowDocumentReaderViewingMode.Scroll;
 
-            // Replace the content in the Media Display Area with the FlowDocumentReader
             MediaDisplayBorder.Child = flowDocumentReader;
         }
     }
