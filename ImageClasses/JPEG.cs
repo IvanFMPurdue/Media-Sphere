@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace Media_Sphere
+namespace Media_Sphere.ImageClasses
 {
     public class JPEG
     {

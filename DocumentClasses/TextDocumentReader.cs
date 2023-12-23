@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Media_Sphere
+namespace Media_Sphere.DocumentClasses
 {
     public class TextDocumentReader
     {

@@ -3,7 +3,7 @@ using iTextSharp.text.pdf.parser;
 using System;
 using System.Text;
 
-namespace Media_Sphere
+namespace Media_Sphere.DocumentClasses
 {
     public class PdfDocumentReader
     {

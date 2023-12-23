@@ -1,4 +1,6 @@
-﻿using Media_Sphere;
+﻿using Media_Sphere.DocumentClasses;
+using Media_Sphere.ImageClasses;
+using Media_Sphere.VideoClasses;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
@@ -101,7 +103,8 @@ namespace Media_Sphere
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "All files (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.InitialDirectory = "test_data";
 
             bool? result = openFileDialog.ShowDialog();
 

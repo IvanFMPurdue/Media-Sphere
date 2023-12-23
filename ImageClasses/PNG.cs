@@ -2,10 +2,10 @@
 using System.Drawing;
 using System.IO;
 
-namespace Media_Sphere
+namespace Media_Sphere.ImageClasses
 {
     public class PNG
-    { 
+    {
         public static string ReadTextFromPng(string filePath)
         {
             if (File.Exists(filePath) && Path.GetExtension(filePath).Equals(".png", StringComparison.OrdinalIgnoreCase))
@@ -16,7 +16,7 @@ namespace Media_Sphere
                     using (Bitmap bmp = new Bitmap(filePath))
                     {
 
-                        
+
 
                         return $"Loaded image from: {filePath}";
                     }

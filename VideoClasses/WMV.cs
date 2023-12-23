@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
 
-
-namespace Media_Sphere
+namespace Media_Sphere.VideoClasses
 {
-    public class MP4Player
+    public class WMVPlayer
     {
         private MediaElement mediaElement;
         private bool isPlaying;
 
-
-        public MP4Player()
+        public WMVPlayer()
         {
             mediaElement = new MediaElement();
             mediaElement.LoadedBehavior = MediaState.Manual;
@@ -20,14 +17,12 @@ namespace Media_Sphere
             mediaElement.MediaEnded += (sender, e) => isPlaying = false;
         }
 
-
-        public void PlayMP4(string filePath)
+        public void PlayWMV(string filePath)
         {
             mediaElement.Source = new Uri(filePath);
             mediaElement.Play();
             isPlaying = true;
         }
-
 
         public void PauseOrResume()
         {
@@ -43,14 +38,12 @@ namespace Media_Sphere
             }
         }
 
-
         public void Replay()
         {
             mediaElement.Stop();
             mediaElement.Play();
             isPlaying = true;
         }
-
 
         public MediaElement GetMediaElement()
         {

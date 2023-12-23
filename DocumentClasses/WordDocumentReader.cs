@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Text;
 
-namespace Media_Sphere
+namespace Media_Sphere.DocumentClasses
 {
     public class WordDocumentReader
     {

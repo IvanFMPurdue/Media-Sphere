@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Controls;
 
-namespace Media_Sphere
+namespace Media_Sphere.VideoClasses
 {
-    public class WMVPlayer
+    public class MOVPlayer
     {
         private MediaElement mediaElement;
         private bool isPlaying;
 
-        public WMVPlayer()
+        public MOVPlayer()
         {
             mediaElement = new MediaElement();
             mediaElement.LoadedBehavior = MediaState.Manual;
@@ -17,7 +16,7 @@ namespace Media_Sphere
             mediaElement.MediaEnded += (sender, e) => isPlaying = false;
         }
 
-        public void PlayWMV(string filePath)
+        public void PlayMOV(string filePath)
         {
             mediaElement.Source = new Uri(filePath);
             mediaElement.Play();
