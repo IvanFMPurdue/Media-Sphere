@@ -104,7 +104,7 @@ namespace Media_Sphere
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "All files (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.InitialDirectory = "test_data";
 
             bool? result = openFileDialog.ShowDialog();
 
