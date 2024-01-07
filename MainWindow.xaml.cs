@@ -107,7 +107,8 @@ namespace Media_Sphere
         private void FileOpenButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|PNG files (*.png)|*.png|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+            //openFileDialog.Filter = "Word files (*.docx;*.doc)|*.docx;*.doc|PNG files (*.png)|*.png|Text files (*.txt)|*.txt|PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+            openFileDialog.Filter = "All files (*.*)|*.*";
             //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             openFileDialog.InitialDirectory = "test_data";
 
