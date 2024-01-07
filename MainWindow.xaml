@@ -49,6 +49,17 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="RecentFilesMenuStyle" TargetType="Popup">
+            <Setter Property="StaysOpen" Value="False"/>
+            <Setter Property="IsOpen" Value="False"/>
+            <Setter Property="PlacementTarget" Value="{Binding ElementName=HamburgerButton}"/>
+            <Setter Property="VerticalOffset" Value="0"/>
+            <Setter Property="HorizontalOffset" Value="4"/>
+        </Style>
+
+
+
     </Window.Resources>
 
     <Grid>
@@ -67,15 +78,24 @@
             <!-- Hamburger Button -->
             <Button x:Name="HamburgerButton" Content="☰" Style="{StaticResource ButtonStyle}" Width="30" Height="30" Click="HamburgerButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
 
-            <!-- Dropdown Menu -->
+            <!-- Main Dropdown Menu -->
             <Popup x:Name="DropdownMenu" PlacementTarget="{Binding ElementName=HamburgerButton}" StaysOpen="False" IsOpen="False"
-       VerticalOffset="0" HorizontalOffset="4">
+                   VerticalOffset="0" HorizontalOffset="4">
                 <Border Background="#333333" BorderThickness="1" BorderBrush="Black">
                     <StackPanel Width="65">
                         <Button Content="File Open" Style="{StaticResource DropdownButtonStyle}" HorizontalAlignment="Left" Click="FileOpenButton_Click" />
-                        <Button Content="Save" Style="{StaticResource DropdownButtonStyle}" HorizontalAlignment="Left" />
-                        <Button Content="Edit" Style="{StaticResource DropdownButtonStyle}" HorizontalAlignment="Left" />
-                        <Button Content="Recent Files" Style="{StaticResource DropdownButtonStyle}" HorizontalAlignment="Left" />
+
+                        <!-- Recent Files Button -->
+                        <Button Content="Recent Files" Style="{StaticResource DropdownButtonStyle}" HorizontalAlignment="Left" Click="RecentFilesButton_Click" />
+
+                        <!-- Recent Files - Popup Menu -->
+                        <Popup x:Name="RecentFilesMenu" StaysOpen="False" IsOpen="False">
+                            <StackPanel Width="150">
+                                <!-- Menu items will be added here dynamically -->
+                            </StackPanel>
+                        </Popup>
+                        <!-- End of Recent Files - Popup Menu -->
+
                     </StackPanel>
                 </Border>
             </Popup>

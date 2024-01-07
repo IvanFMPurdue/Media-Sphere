@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -21,11 +22,13 @@ namespace Media_Sphere
 {
     public partial class MainWindow : Window
     {
+        private SQLiteSchema sqliteSchema;
         private FLACPlayer flacPlayer;
 
         public MainWindow()
         {
             InitializeComponent();
+            sqliteSchema = new SQLiteSchema();
             flacPlayer = new FLACPlayer();
         }
 
@@ -120,28 +123,34 @@ namespace Media_Sphere
                 if (extension.Equals(".docx") || extension.Equals(".doc"))
                 {
                     fileContent = WordDocumentReader.ReadTextFromWordDocument(filePath);
+                    sqliteSchema.AddRecentFile(filePath);
                 }
                 else if (extension.Equals(".txt"))
                 {
                     fileContent = TextDocumentReader.ReadTextFromFile(filePath);
+                    sqliteSchema.AddRecentFile(filePath);
                 }
                 else if (extension.Equals(".pdf"))
                 {
                     fileContent = PdfDocumentReader.ReadTextFromPdfDocument(filePath);
+                    sqliteSchema.AddRecentFile(filePath);
                 }
                 else if (extension.Equals(".png", StringComparison.OrdinalIgnoreCase))
                 {
                     DisplayImage(filePath);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) || extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
                 {
                     JPEG.DisplayJPEGImage(filePath, MediaDisplayBorder);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
                 {
                     GIF.DisplayGIFImage(filePath, MediaDisplayBorder);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".flac", StringComparison.OrdinalIgnoreCase))
@@ -150,6 +159,7 @@ namespace Media_Sphere
                     flacPlayer.PlayFLAC(filePath);
 
                     DisplayAudioControlPanel("Pause/Play", flacPlayer.PauseOrResume, flacPlayer.Replay);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".wav", StringComparison.OrdinalIgnoreCase))
@@ -158,6 +168,7 @@ namespace Media_Sphere
                     wavPlayer.PlayWAV(filePath);
 
                     DisplayAudioControlPanel("Pause/Play", wavPlayer.PauseOrResume, wavPlayer.Replay);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
@@ -166,6 +177,7 @@ namespace Media_Sphere
                     mp3Player.PlayMP3(filePath);
 
                     DisplayAudioControlPanel("Pause/Play", mp3Player.PauseOrResume, mp3Player.Replay);
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".wmv", StringComparison.OrdinalIgnoreCase))
@@ -174,6 +186,7 @@ namespace Media_Sphere
                     wmvPlayer.PlayWMV(filePath);
 
                     MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", wmvPlayer.PauseOrResume, wmvPlayer.Replay, wmvPlayer.GetMediaElement());
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".mov", StringComparison.OrdinalIgnoreCase))
@@ -183,6 +196,7 @@ namespace Media_Sphere
 
                     // Use the CreateVideoControlPanel method from MainWindow to display MOV content
                     MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", movPlayer.PauseOrResume, movPlayer.Replay, movPlayer.GetMediaElement());
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else if (extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
@@ -192,6 +206,7 @@ namespace Media_Sphere
 
 
                     MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", mp4Player.PauseOrResume, mp4Player.Replay, mp4Player.GetMediaElement());
+                    sqliteSchema.AddRecentFile(filePath);
                     return;
                 }
                 else
@@ -201,8 +216,58 @@ namespace Media_Sphere
                 }
 
                 DisplayTextContent(fileContent);
+                sqliteSchema.AddRecentFile(filePath);
             }
         }
+
+        // Recent File Button
+        private bool isRecentFilesMenuOpen = false;
+
+        private void CollapseRecentFilesMenu()
+        {
+            RecentFilesMenu.IsOpen = false;
+            isRecentFilesMenuOpen = false;
+        }
+
+        private void RecentFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Retrieve recent files from the database
+            string[] recentFiles = sqliteSchema.GetRecentFiles();
+
+            // Initialize and apply the RecentFilesMenuStyle
+            RecentFilesMenu = new Popup();
+            RecentFilesMenu.Style = (Style)FindResource("RecentFilesMenuStyle");
+
+            // Create the content for the RecentFilesMenu
+            StackPanel recentFilesPanel = new StackPanel();
+
+            // Add the recent files as menu items
+            foreach (string filePath in recentFiles)
+            {
+                MenuItem menuItem = new MenuItem();
+                menuItem.Header = System.IO.Path.GetFileName(filePath);
+                menuItem.Click += (s, args) => OpenFile(filePath);
+                recentFilesPanel.Children.Add(menuItem);
+            }
+
+            // Set the content to the Popup
+            RecentFilesMenu.Child = recentFilesPanel;
+
+            // Set placement and open the RecentFilesMenu
+            RecentFilesMenu.PlacementTarget = HamburgerButton;
+            RecentFilesMenu.IsOpen = true;
+        }
+
+
+
+        // Method to handle opening the file associated with a clicked menu item
+        private void OpenFile(string filePath)
+        {
+            // Your code to open/display the file based on its filePath
+            // This might involve different logic depending on the file type.
+            // For example, you might have methods for opening different file types.
+        }
+
 
         // DisplayAudioControlPanel method
         private void DisplayAudioControlPanel(string buttonText, Action playAction, Action replayAction)
