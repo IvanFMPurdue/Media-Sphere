@@ -87,6 +87,9 @@
                         <!-- Content Area -->
 
 
+                        
+                        <ListBox x:Name="listBoxRecentFiles" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="150"/>
+
 
 
                     </Grid>

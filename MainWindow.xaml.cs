@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -15,25 +16,28 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Media_Sphere
 {
     public partial class MainWindow : Window
     {
-      
+        private SQLiteDB sqliteDB;
         private FLACPlayer flacPlayer;
 
 
         public MainWindow()
         {
             InitializeComponent();
+            sqliteDB = new SQLiteDB();
             flacPlayer = new FLACPlayer();
-            
         }
+
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
+
 
         private void FullscreenButton_Click(object sender, RoutedEventArgs e)
         {
@@ -47,10 +51,12 @@ namespace Media_Sphere
             }
         }
 
+
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
+
 
         private void WindowDrag(object sender, MouseButtonEventArgs e)
         {
@@ -60,12 +66,15 @@ namespace Media_Sphere
             }
         }
 
+
         private bool isMenuOpen = false;
+
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             isMenuOpen = !isMenuOpen;
             DropdownMenu.IsOpen = isMenuOpen;
+
 
             if (!isMenuOpen)
             {
@@ -73,16 +82,19 @@ namespace Media_Sphere
             }
         }
 
+
         private void CollapseMenu()
         {
             DropdownMenu.IsOpen = false;
             isMenuOpen = false;
         }
 
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             CollapseMenu();
         }
+
 
         private void HamburgerButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -90,15 +102,18 @@ namespace Media_Sphere
             isMenuOpen = true;
         }
 
+
         private void DropdownButton_MouseEnter(object sender, MouseEventArgs e)
         {
             ((Button)sender).Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#555555"));
         }
 
+
         private void DropdownButton_MouseLeave(object sender, MouseEventArgs e)
         {
             ((Button)sender).Background = Brushes.Transparent;
         }
+
 
         private void FileOpenButton_Click(object sender, RoutedEventArgs e)
         {
@@ -106,16 +121,18 @@ namespace Media_Sphere
             openFileDialog.Filter = "All files (*.*)|*.*";
             openFileDialog.InitialDirectory = "test_data";
 
+
             bool? result = openFileDialog.ShowDialog();
+
 
             if (result == true)
             {
                 string filePath = openFileDialog.FileName;
                 string fileContent = string.Empty;
 
+
                 string extension = System.IO.Path.GetExtension(filePath);
 
-                
 
                 if (extension.Equals(".docx") || extension.Equals(".doc"))
                 {
@@ -149,6 +166,7 @@ namespace Media_Sphere
                     flacPlayer = new FLACPlayer();
                     flacPlayer.PlayFLAC(filePath);
 
+
                     DisplayAudioControlPanel("Pause/Play", flacPlayer.PauseOrResume, flacPlayer.Replay);
                     return;
                 }
@@ -156,6 +174,7 @@ namespace Media_Sphere
                 {
                     WAVPlayer wavPlayer = new WAVPlayer();
                     wavPlayer.PlayWAV(filePath);
+
 
                     DisplayAudioControlPanel("Pause/Play", wavPlayer.PauseOrResume, wavPlayer.Replay);
                     return;
@@ -165,15 +184,8 @@ namespace Media_Sphere
                     MP3Player mp3Player = new MP3Player();
                     mp3Player.PlayMP3(filePath);
 
-                    DisplayAudioControlPanel("Pause/Play", mp3Player.PauseOrResume, mp3Player.Replay);
-                    return;
-                }
-                else if (extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
-                {
-                    MP4Player mp4Player = new MP4Player();
-                    mp4Player.PlayMP4(filePath);
 
-                    MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", mp4Player.PauseOrResume, mp4Player.Replay, mp4Player.GetMediaElement());
+                    DisplayAudioControlPanel("Pause/Play", mp3Player.PauseOrResume, mp3Player.Replay);
                     return;
                 }
                 else if (extension.Equals(".wmv", StringComparison.OrdinalIgnoreCase))
@@ -185,39 +197,121 @@ namespace Media_Sphere
                     MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", wmvPlayer.PauseOrResume, wmvPlayer.Replay, wmvPlayer.GetMediaElement());
                     return;
                 }
+                else if (extension.Equals(".mov", StringComparison.OrdinalIgnoreCase))
+                {
+                    MOVPlayer movPlayer = new MOVPlayer();
+                    movPlayer.PlayMOV(filePath);
 
+
+                    // Use the CreateVideoControlPanel method from MainWindow to display MOV content
+                    MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", movPlayer.PauseOrResume, movPlayer.Replay, movPlayer.GetMediaElement());
+                    return;
+                }
+                else if (extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
+                {
+                    MP4Player mp4Player = new MP4Player();
+                    mp4Player.PlayMP4(filePath);
+
+
+                    MediaDisplayBorder.Child = CreateVideoControlPanel("Pause/Play", mp4Player.PauseOrResume, mp4Player.Replay, mp4Player.GetMediaElement());
+                    return;
+                }
                 else
                 {
-
                     MessageBox.Show("Unsupported file format");
                     return;
                 }
 
+
                 DisplayTextContent(fileContent);
+                sqliteDB.AddRecentFile(filePath);
             }
         }
+
+
+        // Recent File Button
+        private bool isRecentFilesMenuOpen = false;
+
+
+        private void CollapseRecentFilesMenu()
+        {
+            RecentFilesMenu.IsOpen = false;
+            isRecentFilesMenuOpen = false;
+        }
+
+
+        private void RecentFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Retrieve recent files from the database
+            string[] recentFiles = sqliteDB.GetRecentFiles();
+
+
+            // Initialize and apply the RecentFilesMenuStyle
+            RecentFilesMenu = new Popup();
+            RecentFilesMenu.Style = (Style)FindResource("RecentFilesMenuStyle");
+
+
+            // Create the content for the RecentFilesMenu
+            StackPanel recentFilesPanel = new StackPanel();
+
+
+            // Add the recent files as menu items
+            foreach (string filePath in recentFiles)
+            {
+                MenuItem menuItem = new MenuItem();
+                menuItem.Header = System.IO.Path.GetFileName(filePath);
+                menuItem.Click += (s, args) => OpenFile(filePath);
+                recentFilesPanel.Children.Add(menuItem);
+            }
+
+
+            // Set the content to the Popup
+            RecentFilesMenu.Child = recentFilesPanel;
+
+
+            // Set placement and open the RecentFilesMenu
+            RecentFilesMenu.PlacementTarget = HamburgerButton;
+            RecentFilesMenu.IsOpen = true;
+        }
+
+
+
+        // Method to handle opening the file associated with a clicked menu item
+        private void OpenFile(string filePath)
+        {
+            // Your code to open/display the file based on its filePath
+            // This might involve different logic depending on the file type.
+            // For example, you might have methods for opening different file types.
+        }
+
 
         // DisplayAudioControlPanel method
         private void DisplayAudioControlPanel(string buttonText, Action playAction, Action replayAction)
         {
             MediaDisplayBorder.Background = Brushes.Black;
 
+
             StackPanel buttonPanel = new StackPanel();
             buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
             buttonPanel.VerticalAlignment = VerticalAlignment.Center;
+
 
             Button pausePlayButton = new Button();
             pausePlayButton.Content = buttonText;
             pausePlayButton.Click += (s, args) => playAction();
             buttonPanel.Children.Add(pausePlayButton);
 
+
             Button replayButton = new Button();
             replayButton.Content = "Replay";
             replayButton.Click += (s, args) => replayAction();
             buttonPanel.Children.Add(replayButton);
 
+
             MediaDisplayBorder.Child = buttonPanel;
         }
+
+
         public UIElement CreateVideoControlPanel(string buttonText, Action playAction, Action replayAction, MediaElement mediaElement)
         {
             StackPanel buttonPanel = new StackPanel();
@@ -242,13 +336,14 @@ namespace Media_Sphere
             };
 
 
-            StackPanel panelWithVideo = new StackPanel();
-            panelWithVideo.Children.Add(buttonPanel);
-            panelWithVideo.Children.Add(mediaElement);
+            StackPanel panelWithMedia = new StackPanel();
+            panelWithMedia.Children.Add(buttonPanel);
+            panelWithMedia.Children.Add(mediaElement);
 
 
-            return panelWithVideo;
+            return panelWithMedia;
         }
+
 
         private void DisplayImage(string imagePath)
         {
@@ -258,6 +353,7 @@ namespace Media_Sphere
                 Image image = new Image();
                 image.Source = bitmapImage;
 
+
                 MediaDisplayBorder.Child = image;
             }
             catch (Exception ex)
@@ -266,29 +362,39 @@ namespace Media_Sphere
             }
         }
 
+
         private void DisplayTextContent(string content)
         {
             MediaDisplayBorder.Background = Brushes.White;
 
+
             FlowDocumentReader flowDocumentReader = new FlowDocumentReader();
+
 
             FlowDocument flowDocument = new FlowDocument();
 
+
             string[] lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
 
             foreach (string line in lines)
             {
                 Paragraph paragraph = new Paragraph(new Run(line));
 
+
                 paragraph.FontFamily = new FontFamily("Calibri");
                 paragraph.FontSize = 12;
+
 
                 flowDocument.Blocks.Add(paragraph);
             }
 
+
             flowDocumentReader.Document = flowDocument;
 
+
             flowDocumentReader.ViewingMode = FlowDocumentReaderViewingMode.Scroll;
+
 
             MediaDisplayBorder.Child = flowDocumentReader;
         }
