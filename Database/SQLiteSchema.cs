@@ -43,14 +43,25 @@ namespace Media_Sphere
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 connection.Open();
-                string insertQuery = "INSERT OR IGNORE INTO RecentFiles (FilePath) VALUES (@FilePath)";
-                using (var command = new SQLiteCommand(insertQuery, connection))
+
+                // Remove the existing entry if it already exists
+                string deleteQuery = "DELETE FROM RecentFiles WHERE FilePath = @FilePath";
+                using (var deleteCommand = new SQLiteCommand(deleteQuery, connection))
                 {
-                    command.Parameters.AddWithValue("@FilePath", filePath);
-                    command.ExecuteNonQuery();
+                    deleteCommand.Parameters.AddWithValue("@FilePath", filePath);
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                // Insert the new entry
+                string insertQuery = "INSERT INTO RecentFiles (FilePath) VALUES (@FilePath)";
+                using (var insertCommand = new SQLiteCommand(insertQuery, connection))
+                {
+                    insertCommand.Parameters.AddWithValue("@FilePath", filePath);
+                    insertCommand.ExecuteNonQuery();
                 }
             }
         }
+
 
         public string[] GetRecentFiles()
         {

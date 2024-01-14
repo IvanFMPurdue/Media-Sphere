@@ -261,6 +261,7 @@ namespace Media_Sphere
 
 
 
+
         // Method to handle opening the file associated with a clicked menu item
         private void OpenFile(string filePath)
         {
