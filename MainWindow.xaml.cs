@@ -224,13 +224,13 @@ namespace Media_Sphere
         // Recent File Button
         private bool isRecentFilesMenuOpen = false;
 
-        private void CollapseRecentFilesMenu()
+        public void CollapseRecentFilesMenu()
         {
             RecentFilesMenu.IsOpen = false;
             isRecentFilesMenuOpen = false;
         }
 
-        private void RecentFilesButton_Click(object sender, RoutedEventArgs e)
+        public void RecentFilesButton_Click(object sender, RoutedEventArgs e)
         {
             // Retrieve recent files from the database
             string[] recentFiles = sqliteSchema.GetRecentFiles();
